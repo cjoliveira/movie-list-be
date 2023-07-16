@@ -14,7 +14,7 @@ public class Filme {
 
     private String titulo;
 
-    @Column(name="datalancamento")
+    @Column(name = "datalancamento")
     private LocalDateTime dataLancamento;
 
     private Long duracao;
@@ -23,7 +23,7 @@ public class Filme {
 
     private String descricao;
 
-    @Column(name="urlfoto")
+    @Column(name = "urlfoto")
     private String urlFoto;
 
     @ManyToOne

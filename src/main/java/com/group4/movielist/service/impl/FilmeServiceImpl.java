@@ -25,12 +25,6 @@ public class FilmeServiceImpl implements FilmeService {
     @Override
     @Transactional
     public FilmeDTO salvar(Filme filme) {
-
-        // Garantindo idempotência
-        Optional<Filme> optionalFilme = consultarPorId(filme.getId());
-        if(optionalFilme.isPresent()) {
-            throw new BusinessRulesException("Já existe filme cadastrado com esse id.");
-        }
         return new FilmeDTO(repository.save(filme));
     }
 
@@ -38,10 +32,10 @@ public class FilmeServiceImpl implements FilmeService {
     @Transactional
     public FilmeDTO atualizar(Long id, Filme filmeAtualizado) {
         Optional<Filme> optionalFilme = consultarPorId(id);
-        if(optionalFilme.isEmpty()){
+        if (optionalFilme.isEmpty()) {
             throw new BusinessRulesException("O filme não existe na base de dados.");
         }
-        if(filmeAtualizado.getId() != null){
+        if (filmeAtualizado.getId() != null) {
             throw new BusinessRulesException("Para essa função, não pode passar o id no body.");
         }
         return new FilmeDTO(repository.save(atualizarFilme(optionalFilme.get(), filmeAtualizado)));
@@ -49,13 +43,16 @@ public class FilmeServiceImpl implements FilmeService {
 
     @Override
     @Transactional
-    public void deletar(Long id) {
-        Optional<Filme> optionalFilme = consultarPorId(id);
-        if(optionalFilme.isEmpty()){
-            throw new BusinessRulesException("Não foi possível deletar o filme com esse id.");
+    public void deletarFilmes(Long[] ids) {
+        for (Long id : ids) {
+            Optional<Filme> optionalFilme = consultarPorId(id);
+            if (optionalFilme.isPresent()) {
+                Filme filme = optionalFilme.get();
+                repository.delete(filme);
+            } else {
+                throw new BusinessRulesException("Não foi possível deletar o filme com o ID: " + id);
+            }
         }
-        Filme filme = optionalFilme.get();
-        repository.delete(filme);
     }
 
     @Override
@@ -66,30 +63,39 @@ public class FilmeServiceImpl implements FilmeService {
 
     @Override
     @Transactional
+    public List<FilmeDTO> buscarFilme(String titulo) {
+        List<Filme> listaFilmes = repository.findAll();
+        List<Filme> filmesEncontrados = listaFilmes.stream()
+                .filter(filme -> filme.getTitulo().toLowerCase().contains(titulo.toLowerCase())).toList();
+        return converterParaDTO(filmesEncontrados);
+    }
+
+    @Override
+    @Transactional
     public Optional<Filme> consultarPorId(Long id) {
         return repository.findById(id);
     }
 
     private Filme atualizarFilme(Filme original, Filme atualizado) {
-        if(atualizado.getTitulo() != null){
+        if (atualizado.getTitulo() != null) {
             original.setTitulo(atualizado.getTitulo());
         }
-        if(atualizado.getDataLancamento() != null){
+        if (atualizado.getDataLancamento() != null) {
             original.setDataLancamento(atualizado.getDataLancamento());
         }
-        if(atualizado.getDuracao() != null){
+        if (atualizado.getDuracao() != null) {
             original.setDuracao(atualizado.getDuracao());
         }
-        if(atualizado.getClassificacao() != null){
+        if (atualizado.getClassificacao() != null) {
             original.setClassificacao(atualizado.getClassificacao());
         }
-        if(atualizado.getDescricao() != null){
+        if (atualizado.getDescricao() != null) {
             original.setDescricao(atualizado.getDescricao());
         }
-        if(atualizado.getUrlFoto() != null){
+        if (atualizado.getUrlFoto() != null) {
             original.setUrlFoto(atualizado.getUrlFoto());
         }
-        if(atualizado.getCategoria() != null){
+        if (atualizado.getCategoria() != null) {
             original.setCategoria(atualizado.getCategoria());
         }
         return original;

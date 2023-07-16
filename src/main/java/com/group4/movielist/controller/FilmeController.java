@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/filmes")
+@CrossOrigin(origins = {"http://127.0.0.1:3000", "http://127.0.0.1:5500"})
 public class FilmeController {
 
     FilmeService filmeService;
@@ -22,6 +23,11 @@ public class FilmeController {
     @GetMapping
     public List<FilmeDTO> listarFilmes() {
         return filmeService.listarFilmes();
+    }
+
+    @GetMapping("/buscar")
+    public List<FilmeDTO> buscarFilme(@RequestParam(value = "titulo", required = true) String titulo) {
+        return filmeService.buscarFilme(titulo);
     }
 
     @PostMapping("/cadastrar")
@@ -44,10 +50,10 @@ public class FilmeController {
         }
     }
 
-    @DeleteMapping("/deletar-filme/{id}")
-    public ResponseEntity deletar(@PathVariable("id") Long id) {
+    @DeleteMapping("/deletar-filmes")
+    public ResponseEntity deletar(@RequestParam("ids") Long[] ids) {
         try {
-            filmeService.deletar(id);
+            filmeService.deletarFilmes(ids);
             return new ResponseEntity(HttpStatus.ACCEPTED);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

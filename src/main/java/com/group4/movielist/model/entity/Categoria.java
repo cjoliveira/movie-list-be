@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "categoria", schema = "movie_list")
 public class Categoria {
 
-
     public Categoria() {
 
     }

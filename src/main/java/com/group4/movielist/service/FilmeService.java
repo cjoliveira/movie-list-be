@@ -8,11 +8,13 @@ import java.util.Optional;
 
 public interface FilmeService {
 
-    FilmeDTO salvar (Filme filme);
+    FilmeDTO salvar(Filme filme);
 
     FilmeDTO atualizar(Long id, Filme filmeAtualizado);
 
-    void deletar(Long id);
+    void deletarFilmes(Long[] ids);
+
+    List<FilmeDTO> buscarFilme(String titulo);
 
     List<FilmeDTO> listarFilmes();
 
