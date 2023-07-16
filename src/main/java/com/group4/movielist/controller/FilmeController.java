@@ -14,6 +14,8 @@ import java.util.List;
 @CrossOrigin(origins = {"http://127.0.0.1:3000", "http://127.0.0.1:5500"})
 public class FilmeController {
 
+    private static final int QUANTIDADE_PREFERIDOS = 3;
+
     FilmeService filmeService;
 
     public FilmeController(FilmeService filmeService) {
@@ -25,8 +27,14 @@ public class FilmeController {
         return filmeService.listarFilmes();
     }
 
+    @GetMapping("/buscar-populares")
+    public List<FilmeDTO> buscarPopulares() {
+        List<FilmeDTO> lista = filmeService.buscarPopulares(QUANTIDADE_PREFERIDOS);
+        return lista;
+    }
+
     @GetMapping("/buscar")
-    public List<FilmeDTO> buscarFilme(@RequestParam(value = "titulo", required = true) String titulo) {
+    public List<FilmeDTO> buscar(@RequestParam(value = "titulo", required = true) String titulo) {
         return filmeService.buscarFilme(titulo);
     }
 
@@ -51,7 +59,7 @@ public class FilmeController {
     }
 
     @DeleteMapping("/deletar-filmes")
-    public ResponseEntity deletar(@RequestParam("ids") Long[] ids) {
+    public ResponseEntity deletarFilmes(@RequestParam("ids") Long[] ids) {
         try {
             filmeService.deletarFilmes(ids);
             return new ResponseEntity(HttpStatus.ACCEPTED);

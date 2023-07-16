@@ -16,6 +16,8 @@ public interface FilmeService {
 
     List<FilmeDTO> buscarFilme(String titulo);
 
+    List<FilmeDTO> buscarPopulares(int quantidade);
+
     List<FilmeDTO> listarFilmes();
 
     Optional<Filme> consultarPorId(Long id);

@@ -11,11 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class FilmeServiceImpl implements FilmeService {
 
-    private FilmeRepository repository;
+    private final FilmeRepository repository;
 
 
     public FilmeServiceImpl(FilmeRepository repository) {
@@ -74,6 +75,28 @@ public class FilmeServiceImpl implements FilmeService {
     @Transactional
     public Optional<Filme> consultarPorId(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public List<FilmeDTO> buscarPopulares(int quantidade) {
+        List<Filme> filmes = repository.findAll();
+        List<Filme> filmesPreferidos = new ArrayList<>();
+        Random random = new Random();
+
+        if (filmes.size() < quantidade) {
+            return converterParaDTO(filmes);
+        }
+
+        while (filmesPreferidos.size() < quantidade) {
+            int indice = random.nextInt(filmes.size());
+            Filme filme = filmes.get(indice);
+            if (!filmesPreferidos.contains(filme)) {
+                filmesPreferidos.add(filme);
+            }
+        }
+
+        return converterParaDTO(filmesPreferidos);
     }
 
     private Filme atualizarFilme(Filme original, Filme atualizado) {
