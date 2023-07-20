@@ -10,7 +10,7 @@ public class FilmeDTO {
 
     public FilmeDTO() {
     }
-
+    // Esse é o meu DTO
     public FilmeDTO(Filme filme) {
         this.id = filme.getId();
         this.titulo = filme.getTitulo();
